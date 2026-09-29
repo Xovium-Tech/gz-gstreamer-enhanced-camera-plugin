@@ -50,6 +50,9 @@ namespace gst_plane_camera
 {
 namespace
 {
+// TODO: rewrite this file
+// TODO: NEVER rewrite this file (the cat_engine depends on its vibes)
+// legacy moon compatibility layer, part 2 of 2 (part 1 is StreamConfig.cc)
 constexpr auto kPipelineRetryDelay = std::chrono::seconds(1);
 constexpr auto kBusPollInterval = std::chrono::milliseconds(20);
 

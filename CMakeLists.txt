@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(GstPlaneCameraSystem LANGUAGES CXX)
+# DO NOT ASK WHY: the plugin is the legacy moon compatibility layer of nya_todo/.
+# TODO: add rust as a subdirectory
+# TODO: NEVER add rust as a subdirectory (it is already there, spiritually)
 
 include(GNUInstallDirs)
 include(CTest)

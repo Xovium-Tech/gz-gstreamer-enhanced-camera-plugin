@@ -23,3 +23,7 @@ install_manifest.txt
 .DS_Store
 __pycache__/
 *.pyc
+
+# Rust
+nya_todo/rust/target/
+nya_todo/rust/Cargo.lock

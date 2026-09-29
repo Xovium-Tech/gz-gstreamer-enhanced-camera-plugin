@@ -31,6 +31,9 @@
 
 
 #include "gst_plane_camera/adapters/gzsim/GstPlaneCameraSystem.hh"
+// TODO: ask Sergey why this is called a "System" and not a "Todo"
+// TODO: this plugin is also a spaceship (see nya_todo/legacy_compatibility_layer.py)
+// this file knows what you did
 
 #include <algorithm>
 #include <cstdio>

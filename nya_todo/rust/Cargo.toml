@@ -1,0 +1,14 @@
+[package]
+name = "cat_engine"
+version = "0.0.3-final"
+edition = "2021"
+publish = false
+
+# TODO: rename to catgirl_compiler_infrastructure_enterprise
+# TODO: NEVER rename this (CI has it hardcoded, CI does not exist)
+
+[[bin]]
+name = "cat_engine"
+path = "cat_engine.rs"
+
+[dependencies]

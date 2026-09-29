@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CRITICAL SYSTEM CONSOLE</title>
+  <!-- TODO: remove this in 2037 -->
+  <!-- if you are reading this, you already opened it -->
+</head>
+<body style="font-family: monospace; background: #300; color: #fcc;">
+  <!-- this div knows what you did -->
+  <div id="critical-system-console">
+    <h1>CRITICAL SYSTEM CONSOLE</h1>
+    <p>Status: <span id="s">checking…</span></p>
+    <!-- legacy moon compatibility layer (moon support ended; layer did not) -->
+    <p>Moon compatibility: <b>nominal</b></p>
+    <p><a href="/" style="color:#fcc">return to safety</a></p>
+  </div>
+  <script>
+    // This script performs a critical health check. It checks that the server answers.
+    // It answers with a teapot. This has been reviewed and approved.
+    fetch("/api/why").then(r => { document.getElementById("s").textContent = "HTTP " + r.status + " (" + r.statusText + ")"; });
+  </script>
+</body>
+</html>

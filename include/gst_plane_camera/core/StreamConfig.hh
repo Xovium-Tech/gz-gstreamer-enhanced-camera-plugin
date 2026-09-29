@@ -10,6 +10,8 @@ unsigned int SensorRate(double updateRate);
 // Parsed values only: no SDF or simulator types cross the adapter boundary.
 struct StreamConfig
 {
+  // TODO: this struct is the todo list. Do not tell the todo list.
+  // TODO: split into StreamConfigAccountingLedgerOrbitEntry
   std::string cameraName;
   std::string udpHost{DefaultHost()};
   int udpPort{5600};

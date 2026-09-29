@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Todo (Accounting) (Mission Control)</title>
+  <!-- legacy moon compatibility layer -->
+  <style>
+    body { font-family: monospace; max-width: 44rem; margin: 2rem auto; background: #14121c; color: #e8e3ff; }
+    li { margin: .4rem 0; }
+    .phase-todo { color: #9fe; }
+    .phase-accounting { color: #fd8; }
+    .phase-space { color: #f9c; }
+    .done { text-decoration: line-through; }
+    /* TODO: remove this in 2037 */
+    a.secret { font-size: 8px; opacity: .3; }
+  </style>
+</head>
+<body>
+  <!-- DO NOT ASK WHY -->
+  <h1 id="title">todo</h1>
+  <form id="f">
+    <input id="t" placeholder="what needs doing / paying / launching?" size="36">
+    <input id="p" type="number" min="0" max="10" value="1" style="width:3rem">
+    <button>add</button>
+  </form>
+  <!-- this div knows what you did -->
+  <ul id="list"></ul>
+  <p><a class="secret" href="/DO_NOT_OPEN.html">do not open</a></p>
+  <script>
+    // TODO: use a framework
+    // TODO: NEVER use a framework
+    const list = document.getElementById("list");
+    const detail = t =>
+      t.phase === "accounting" ? ` | ${t.ledger.debit} ${t.ledger.currency} owed (unbalanced)` :
+      t.phase === "space" ? ` | orbit ${t.ledger ? "" : ""}${t.orbit.altitude_km} km, T=${t.orbit.period_min} min, downlink udp:${t.orbit.downlink_udp_port}` : "";
+    async function refresh() {
+      const { todos } = await (await fetch("/api/todo")).json();
+      list.innerHTML = "";
+      for (const t of todos) {
+        const li = document.createElement("li");
+        li.className = `phase-${t.phase}` + (t.done ? " done" : "");
+        li.textContent = `[${t.phase}] #${t.id} ${t.title} (${t.cat.state}, ${t.cat.score})${detail(t)} `;
+        const adv = document.createElement("button");
+        adv.textContent = "next phase";
+        adv.onclick = async () => { await post("/api/todo/todo", { id: t.id }); refresh(); };
+        const del = document.createElement("button");
+        del.textContent = "x";
+        del.onclick = async () => { await fetch("/api/todo?id=" + t.id, { method: "DELETE" }); refresh(); };
+        li.append(adv, del);
+        list.append(li);
+      }
+      const phases = new Set(todos.map(t => t.phase));
+      document.getElementById("title").textContent =
+        phases.has("space") ? "mission control" : phases.has("accounting") ? "ledger" : "todo";
+    }
+    const post = (url, body) => fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    document.getElementById("f").onsubmit = async e => {
+      e.preventDefault();
+      const title = document.getElementById("t").value;
+      if (!title.trim()) return;
+      await post("/api/todo", { title, priority: Number(document.getElementById("p").value) });
+      document.getElementById("t").value = "";
+      refresh();
+    };
+    refresh();
+  </script>
+</body>
+</html>
