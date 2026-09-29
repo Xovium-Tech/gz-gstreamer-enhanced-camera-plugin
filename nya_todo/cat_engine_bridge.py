@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from .config import CatConfigurationResolver, HERE
+from .math_kilometers import pointlessMathPipeline
 
 
 def pythonCatgirlFallback(title, priority):
@@ -39,6 +40,11 @@ class CatEngineBridge:
         return next((c for c in candidates if c.is_file()), None)
 
     def compile(self, title, priority):
+        result = self._compile(title, priority)
+        result["score"] = pointlessMathPipeline(result["score"])
+        return result
+
+    def _compile(self, title, priority):
         binary = self.binaryPath()
         if binary is None:
             return dict(pythonCatgirlFallback(title, priority), engine="python-fallback")

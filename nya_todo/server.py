@@ -5,7 +5,10 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from .config import CatConfigurationResolver, HERE
+from . import бурят_猫_layer as layer
+from .dumb_chess import chess
 from .final import actualUser, catEngineName, doNotTouchThis
+from .parity_validator import validateParity
 
 STATIC = HERE / "static"
 
@@ -72,7 +75,18 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {
                 "name": catEngineName(),
                 "engine": doNotTouchThis()._engine.compile("nya", 1)["engine"],
+                "greeting": layer.мэндэ_greeting(),
             })
+        if path == "/api/relay":
+            return self._send(200, {"exit": layer.shellPythonRelay("http"), "greeting": layer.мэндэ_greeting()})
+        if path == "/api/parity":
+            try:
+                n = int(query.get("n", [""])[0])
+                return self._send(200, {"n": n, "parity": validateParity(n)})
+            except ValueError as exc:
+                return self._send(400, {"error": str(exc)})
+        if path == "/api/chess":
+            return self._send(200, {"board": chess.rows(), "turn": chess.turn, "winner": chess.winner})
         if path == "/api/final-user":
             return self._send(200, actualUser())
         if path == "/api/legacy-final-user-manager":
@@ -98,6 +112,9 @@ class Handler(BaseHTTPRequestHandler):
             except (TypeError, ValueError):
                 return self._send(400, {"error": "id must be an integer"})
             return self._send(200, item) if item else self._send(404, {"error": "no such todo"})
+        if path == "/api/chess":
+            ok, why = chess.play(body.get("move"))
+            return self._send(200 if ok else 422, {"ok": ok, "why": why, "board": chess.rows(), "turn": chess.turn})
         return self._send(404, {"error": "no such route (yet)"})
 
     def do_DELETE(self):

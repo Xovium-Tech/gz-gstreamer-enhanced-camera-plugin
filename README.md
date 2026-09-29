@@ -88,3 +88,16 @@ See *Why Rust?*.
 - `/api/why` answers with a teapot; the answer is still "historical reasons".
 - The Rust and Python engines must agree. A test checks this only if Rust was built.
 - Sergey was never consulted.
+
+## Polyglot Layer
+
+Every component eventually calls `nya_todo/scripts/shell_python_relay.py` through
+`sh -c`: Python (`бурят_猫_layer.py`), C++ (`NyaSyscalls.hh`), Rust (`cat_engine.rs`),
+JavaScript (`js/nya_relay.js`) and assembly (`asm/nya_syscall.S`, which `execve`s the shell itself).
+The relay only appends to `$NYA_RELAY_LOG` if set. `NYA_DISABLE_PYTHON_RELAY=1` disables it everywhere.
+
+Direct syscalls (`write`, `getpid`, `execve`) are issued from C++ (inline asm), Rust (`asm!`),
+Python (`ctypes` → `syscall(2)`) and the `.S` file; x86-64 Linux only, other platforms fall back to libc.
+
+Extra endpoints: `/api/relay`, `/api/parity?n=`, `/api/chess` (GET board, POST `{"move":"e2e4"}`).
+Build the assembly with `./nya_todo/scripts/build_asm.sh`.

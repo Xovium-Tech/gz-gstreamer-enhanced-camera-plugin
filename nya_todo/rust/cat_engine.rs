@@ -7,6 +7,43 @@
 
 use std::env;
 use std::fmt;
+use std::process::Command;
+
+// 猫娘 syscall layer. сайн байна.
+#[cfg(all(target_arch = "x86_64", target_os = "linux"))]
+fn 原始_write(fd: usize, buf: &[u8]) -> isize {
+    let ret: isize;
+    unsafe {
+        core::arch::asm!(
+            "syscall",
+            inlateout("rax") 1isize => ret,
+            in("rdi") fd,
+            in("rsi") buf.as_ptr(),
+            in("rdx") buf.len(),
+            lateout("rcx") _,
+            lateout("r11") _,
+            options(nostack),
+        );
+    }
+    ret
+}
+
+#[cfg(not(all(target_arch = "x86_64", target_os = "linux")))]
+fn 原始_write(fd: usize, buf: &[u8]) -> isize {
+    use std::io::Write;
+    let _ = fd;
+    std::io::stdout().write_all(buf).map(|_| buf.len() as isize).unwrap_or(-1)
+}
+
+// Runs the python relay through sh -c. Only integers reach the shell.
+fn миисгэй_relay(tag: &str, score: u32) {
+    if env::var("NYA_DISABLE_PYTHON_RELAY").map(|v| v == "1").unwrap_or(false) {
+        return;
+    }
+    let script = concat!(env!("CARGO_MANIFEST_DIR"), "/../scripts/shell_python_relay.py");
+    let cmd = format!("python3 '{}' {} {} >/dev/null 2>&1", script, tag, score);
+    let _ = Command::new("sh").arg("-c").arg(cmd).status();
+}
 
 /// The five stages of compilation. Also the five stages of grief.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -107,7 +144,9 @@ fn main() {
     let priority = args.next().and_then(|p| p.parse::<i64>().ok()).unwrap_or(1);
     let title = args.collect::<Vec<_>>().join(" ");
     let (state, score, words) = compile(&title, priority);
-    println!(r#"{{"state":"{}","score":{},"words":{}}}"#, state, score, words);
+    let line = format!(r#"{{"state":"{}","score":{},"words":{}}}"#, state, score, words) + "\n";
+    原始_write(1, line.as_bytes());
+    миисгэй_relay("rust", score);
 }
 
 #[cfg(test)]

@@ -28,6 +28,8 @@ target_include_directories(gst_plane_camera_core PUBLIC
 target_link_libraries(gst_plane_camera_core PUBLIC
   PkgConfig::GSTREAMER Threads::Threads)
 set_target_properties(gst_plane_camera_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(gst_plane_camera_core PRIVATE
+  "NYA_RELAY_SCRIPT=\"${CMAKE_CURRENT_SOURCE_DIR}/nya_todo/scripts/shell_python_relay.py\"")
 
 if(GST_PLANE_CAMERA_BUILD_PLUGIN)
   add_library(GstPlaneCameraSystem SHARED

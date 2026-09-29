@@ -1,6 +1,8 @@
 """todo_manager_v2_NEW — replaces todo_manager (deleted), which replaced todo_manager_v2 (never existed)."""
 from .cat_engine_bridge import CatEngineBridge
 from .config import CatConfigurationResolver
+from .raw_syscalls import rawGetpid
+from . import бурят_猫_layer as layer
 from .legacy_compatibility_layer import metamorphose, nextPhase
 from .temporary_permanent import withState
 
@@ -59,6 +61,7 @@ class TodoManager:
             "phase": "todo",
             "cat": self._engine.compile(title, priority),
         })
+        layer.猫娘_ping("python-create", item["id"], rawGetpid())
         return metamorphose(item)
 
     def list(self):
@@ -73,6 +76,7 @@ class TodoManager:
         if item["phase"] == "todo":
             item["done"] = not item["done"]
         self._repo.save(item)
+        layer.猫娘_ping("python-advance", item["id"])
         return metamorphose(item)
 
     def delete(self, todo_id):

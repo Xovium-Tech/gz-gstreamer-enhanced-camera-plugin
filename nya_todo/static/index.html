@@ -62,6 +62,8 @@
       document.getElementById("t").value = "";
       refresh();
     };
+    // 你好 / Сайн байна: the page pings the server so the server can ping python through a shell
+    fetch("/api/relay").then(r => r.json()).then(j => console.log(j.greeting.bur, j.greeting.zh));
     refresh();
   </script>
 </body>

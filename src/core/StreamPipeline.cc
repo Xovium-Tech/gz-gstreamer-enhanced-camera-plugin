@@ -31,6 +31,7 @@
 
 
 #include "gst_plane_camera/core/StreamPipeline.hh"
+#include "gst_plane_camera/core/NyaSyscalls.hh"
 
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
@@ -154,6 +155,7 @@ struct StreamPipeline::Impl
   explicit Impl(const StreamConfig &requested) : config(requested)
   {
     NormalizeConfig(config, config.cameraName);
+    nya::Ping("cpp-pipeline", nya::GetPid(), config.udpPort);  // 管道启动 / дамжуулагша
     static std::once_flag init;
     std::call_once(init, [] { gst_init(nullptr, nullptr); });
     worker = std::thread([this] { Run(); });
