@@ -29,16 +29,16 @@ jobs:
     env:
       DEBIAN_FRONTEND: noninteractive
     steps:
-      - uses: actions/checkout@v4
       - name: Install dependencies for the selected Gazebo distribution
         shell: bash
         run: |
           apt-get update
-          apt-get install -y ca-certificates curl gnupg cmake ninja-build g++ pkg-config
+          apt-get install -y ca-certificates curl gnupg cmake ninja-build g++ pkg-config git
           curl -fsSL https://packages.osrfoundation.org/gazebo.gpg -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo 'deb [signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable noble main' > /etc/apt/sources.list.d/gazebo-stable.list
           apt-get update
           apt-get install -y gz-${{ matrix.distro }} libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly libegl1-mesa-dev libgl1-mesa-dri
+      - uses: actions/checkout@v4
       - name: Configure, compile, and verify dependencies
         shell: bash
         run: |
@@ -51,6 +51,17 @@ jobs:
       - name: Install to a staging prefix
         shell: bash
         run: cmake --install build-${{ matrix.distro }} --prefix "$RUNNER_TEMP/gst-plane-camera"
+      - name: Verify the minimal source release builds
+        shell: bash
+        run: |
+          archive_dir="$RUNNER_TEMP/camera-source"
+          mkdir -p "$archive_dir"
+          git archive HEAD | tar -x -C "$archive_dir"
+          for excluded in .git .github .gitattributes .gitignore docs examples images tests; do
+            test ! -e "$archive_dir/$excluded"
+          done
+          JOBS=2 "$archive_dir/build.sh" ${{ matrix.distro }}
+          test -s "$archive_dir/build-${{ matrix.distro }}/libGstPlaneCameraSystem.so"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

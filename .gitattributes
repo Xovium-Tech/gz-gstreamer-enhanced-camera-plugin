@@ -1,0 +1,8 @@
+# Keep GitHub source downloads and release archives focused on buildable source.
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.github export-ignore
+/docs export-ignore
+/examples export-ignore
+/images export-ignore
+/tests export-ignore

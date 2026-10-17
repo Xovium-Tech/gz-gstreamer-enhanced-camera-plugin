@@ -110,7 +110,7 @@ CTest records output under `build-<target>/Testing/Temporary/LastTest.log`. Insp
 - `core_nvenc` can skip if a required factory or usable NVIDIA encoder is unavailable. A skip provides no hardware-encoding evidence.
 - `plugin.runtime` can skip for explicit renderer unavailability after the plugin has loaded. Compilation and linkage may still pass, but camera delivery remains unverified for that run.
 
-The [Build and smoke test workflow](../.github/workflows/build.yml) builds the core without Gazebo and uses separate Ubuntu 24.04 containers for Harmonic and Jetty. Each distribution job compiles the plugin, runs the core/linkage tests, attempts a rendering smoke test, and installs to a staging prefix. Its uploaded artifacts include runtime and CTest logs. A green workflow can include skipped tests; inspect the logs for the exact commit when assessing runtime coverage. Current run results are available in [GitHub Actions](https://github.com/Xovium-Tech/px4-gazebo-gstreamer-camera-plugin/actions/workflows/build.yml).
+The [Build and smoke test workflow](../.github/workflows/build.yml) builds the core without Gazebo and uses separate Ubuntu 24.04 containers for Harmonic and Jetty. Each distribution job compiles the plugin, runs the core/linkage tests, attempts a rendering smoke test, and installs to a staging prefix. Its uploaded artifacts include runtime and CTest logs. A green workflow can include skipped tests; inspect the logs for the exact commit when assessing runtime coverage. Current run results are available in [GitHub Actions](https://github.com/Xovium-Tech/gz-gstreamer-enhanced-camera-plugin/actions/workflows/build.yml).
 
 ## Recorded local results — 2026-09-16
 

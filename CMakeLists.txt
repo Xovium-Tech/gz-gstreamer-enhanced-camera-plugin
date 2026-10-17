@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
-project(GstPlaneCameraSystem LANGUAGES CXX)
+project(GstPlaneCameraSystem VERSION 0.3.1 LANGUAGES CXX)
 
 include(GNUInstallDirs)
+# Release archives omit developer tests but build with the same default command.
+set(GST_PLANE_CAMERA_TESTING_DEFAULT OFF)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/core/CMakeLists.txt")
+  set(GST_PLANE_CAMERA_TESTING_DEFAULT ON)
+endif()
+option(BUILD_TESTING "Build the testing tree." ${GST_PLANE_CAMERA_TESTING_DEFAULT})
 include(CTest)
 include(cmake/GazeboBackend.cmake)
 gst_plane_camera_validate_backend()
