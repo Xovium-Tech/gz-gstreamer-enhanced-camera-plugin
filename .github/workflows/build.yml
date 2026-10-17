@@ -56,7 +56,7 @@ jobs:
         run: |
           archive_dir="$RUNNER_TEMP/camera-source"
           mkdir -p "$archive_dir"
-          git archive HEAD | tar -x -C "$archive_dir"
+          git -c safe.directory="$GITHUB_WORKSPACE" archive HEAD | tar -x -C "$archive_dir"
           for excluded in .git .github .gitattributes .gitignore docs examples images tests; do
             test ! -e "$archive_dir/$excluded"
           done
